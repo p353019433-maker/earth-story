@@ -1,0 +1,227 @@
+/* ============================================================
+   LandmarkCard — Deep Space Glass 系统
+   磨砂玻璃底 · 地标金描边 · 3D 透视进出场
+   与 PlantCard 同一运动语言，仅色调区分
+   ============================================================ */
+
+.landmark-card-overlay {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1000;
+  transform: translate(-50%, -100%);
+  filter: drop-shadow(0 20px 58px rgba(0, 0, 0, 0.76));
+  font-family: "Inter", -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  perspective: 800px;
+}
+
+/* 茎：地标金渐变 */
+.landmark-card-stem {
+  width: 1px;
+  height: 28px;
+  margin: 0 auto;
+  background: linear-gradient(
+    180deg,
+    rgba(232, 200, 122, 0.75) 0%,
+    rgba(232, 200, 122, 0.0) 100%
+  );
+  animation: lm-stem-grow 0.5s var(--dt-ease-spring) forwards;
+  transform-origin: top center;
+}
+
+@keyframes lm-stem-grow {
+  0%   { transform: scaleY(0); opacity: 0; }
+  100% { transform: scaleY(1); opacity: 1; }
+}
+
+/* 卡片主体：磨砂玻璃 */
+.landmark-card-body {
+  pointer-events: auto;
+  position: relative;
+  width: min(94vw, 364px);
+  padding: 17px 19px 15px;
+  border-radius: var(--dt-radius-md);
+  background: var(--dt-bg-surface);
+  border: 1px solid rgba(232, 200, 122, 0.16);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.68),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: var(--dt-glass-blur);
+  backdrop-filter: var(--dt-glass-blur);
+  animation: lm-card-enter 0.42s var(--dt-ease-spring) forwards;
+  transform-origin: center bottom;
+}
+
+@keyframes lm-card-enter {
+  0%   { opacity: 0; transform: scale(0.86) translateY(14px) rotateX(10deg); }
+  55%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(1) translateY(0) rotateX(0deg); }
+}
+
+.landmark-card-body.is-exiting {
+  animation: lm-card-exit 0.22s var(--dt-ease-out) forwards;
+}
+
+@keyframes lm-card-exit {
+  0%   { opacity: 1; transform: scale(1) translateY(0) rotateX(0deg); }
+  100% { opacity: 0; transform: scale(0.90) translateY(10px) rotateX(-6deg); }
+}
+
+/* 关闭按钮 */
+.landmark-card-close {
+  position: absolute;
+  top: 10px; right: 11px;
+  width: 22px; height: 22px;
+  border: none; border-radius: var(--dt-radius-sm);
+  background: var(--dt-bg-fill);
+  color: var(--dt-text-secondary);
+  font-size: 10px; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--dt-dur-fast), color var(--dt-dur-fast);
+}
+.landmark-card-close:hover {
+  background: var(--dt-accent-landmark-soft);
+  color: var(--dt-accent-landmark);
+}
+
+/* 头部 */
+.landmark-card-header {
+  display: flex; align-items: flex-start; gap: 11px;
+  margin-bottom: 8px; padding-right: 26px;
+}
+
+.landmark-card-icon { font-size: 26px; line-height: 1; flex-shrink: 0; }
+
+.landmark-card-title-group { display: flex; flex-direction: column; gap: 2px; }
+
+.landmark-card-name {
+  font-size: 17px; font-weight: 700;
+  color: var(--dt-text-primary); letter-spacing: 0.3px;
+}
+
+.landmark-card-name-en {
+  font-size: 11px; font-style: italic;
+  color: rgba(232, 200, 122, 0.52);
+}
+
+/* meta 行 */
+.landmark-card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+
+.landmark-card-era { font-size: 12px; color: var(--dt-text-secondary); }
+
+.landmark-card-category-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 6px;
+  background: var(--dt-accent-landmark-soft);
+  color: var(--dt-accent-landmark);
+  border: 1px solid var(--dt-accent-landmark-stroke);
+  white-space: nowrap;
+}
+
+/* 分割线 */
+.landmark-card-divider { height: 1px; background: var(--dt-stroke); margin-bottom: 12px; }
+
+/* 故事文本 */
+.landmark-card-story {
+  font-size: 13px; line-height: 1.74;
+  color: var(--dt-text-secondary);
+  max-height: 260px; overflow-y: auto; padding-right: 6px;
+}
+.landmark-card-story::-webkit-scrollbar { width: 3px; }
+.landmark-card-story::-webkit-scrollbar-track { background: transparent; }
+.landmark-card-story::-webkit-scrollbar-thumb {
+  background: rgba(232, 200, 122, 0.28); border-radius: 2px;
+}
+
+/* 坐标 */
+.landmark-card-coords {
+  margin-top: 10px; font-size: 9.5px;
+  color: var(--dt-text-tertiary); text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 关联线按钮 ---------- */
+.landmark-card-connection-mode-btn {
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; margin-top: 11px; padding: 9px 12px;
+  border: 1px solid rgba(232, 200, 122, 0.26); border-radius: 10px;
+  background: rgba(232, 200, 122, 0.07);
+  color: var(--dt-accent-landmark);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  transition: background var(--dt-dur-fast), border-color var(--dt-dur-fast);
+}
+.landmark-card-connection-mode-btn:hover {
+  background: rgba(232, 200, 122, 0.14);
+  border-color: rgba(232, 200, 122, 0.44);
+}
+.landmark-card-connection-mode-btn.active {
+  background: rgba(232, 200, 122, 0.18);
+  border-color: rgba(232, 200, 122, 0.52);
+}
+.landmark-card-connection-mode-icon { font-size: 14px; }
+
+/* ---------- 相关故事折叠按钮 ---------- */
+.landmark-card-connections-toggle {
+  display: flex; align-items: center; gap: 7px;
+  width: 100%; margin-top: 8px; padding: 8px 12px;
+  border: 1px solid rgba(232, 200, 122, 0.16); border-radius: 10px;
+  background: rgba(232, 200, 122, 0.04);
+  color: var(--dt-text-secondary); font-size: 12px;
+  cursor: pointer;
+  transition: background var(--dt-dur-fast), border-color var(--dt-dur-fast);
+}
+.landmark-card-connections-toggle:hover {
+  background: rgba(232, 200, 122, 0.10);
+  border-color: rgba(232, 200, 122, 0.30);
+}
+.landmark-card-connections-toggle-icon { font-size: 13px; }
+
+.landmark-card-connections-arrow {
+  margin-left: auto; font-size: 10px;
+  transition: transform 0.22s ease;
+}
+.landmark-card-connections-arrow.open { transform: rotate(180deg); }
+
+/* ---------- 相关故事列表 ---------- */
+.landmark-card-connections {
+  margin-top: 8px; max-height: 200px; overflow-y: auto; padding-right: 3px;
+  animation: lm-connections-in 0.28s var(--dt-ease-out) forwards;
+}
+
+@keyframes lm-connections-in {
+  0%   { opacity: 0; transform: translateY(-6px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.landmark-card-connections::-webkit-scrollbar { width: 3px; }
+.landmark-card-connections::-webkit-scrollbar-track { background: transparent; }
+.landmark-card-connections::-webkit-scrollbar-thumb {
+  background: rgba(232, 200, 122, 0.28); border-radius: 2px;
+}
+
+.landmark-card-connection-item {
+  padding: 8px 10px; margin-bottom: 6px; border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(232, 200, 122, 0.10);
+  transition: background var(--dt-dur-fast);
+}
+.landmark-card-connection-item:hover { background: rgba(232, 200, 122, 0.08); }
+
+.landmark-card-connection-header {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 3px;
+}
+
+.landmark-card-connection-type {
+  font-size: 10px; padding: 1px 7px; border-radius: 5px;
+  background: var(--dt-accent-landmark-soft);
+  color: var(--dt-accent-landmark);
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.landmark-card-connection-title {
+  font-size: 12px; font-weight: 600; color: var(--dt-text-primary);
+}
+
+.landmark-card-connection-desc {
+  font-size: 11px; line-height: 1.55; color: var(--dt-text-secondary);
+}

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+.DS_Store
+.playwright-cli/
+output/
+vite.config.*.timestamp*
+vite.config.sandbox.mjs.timestamp*

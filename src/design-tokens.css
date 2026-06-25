@@ -1,0 +1,51 @@
+/* ============================================================
+   Design Tokens — Deep Space Glass 系统
+   全项目唯一颜色/尺寸/动画来源，所有组件通过 var(--dt-*) 引用
+   ============================================================ */
+:root {
+  /* === 背景层 === */
+  --dt-bg-canvas:      #020408;
+  --dt-bg-surface:     rgba(8, 12, 22, 0.88);
+  --dt-bg-fill:        rgba(255, 255, 255, 0.042);
+  --dt-bg-fill-hover:  rgba(255, 255, 255, 0.082);
+
+  /* === 文字层级 === */
+  --dt-text-primary:   rgba(220, 230, 245, 0.96);
+  --dt-text-secondary: rgba(160, 178, 210, 0.68);
+  --dt-text-tertiary:  rgba(120, 140, 175, 0.44);
+
+  /* === 强调色 === */
+  --dt-accent-plant:        #7ecfa0;
+  --dt-accent-plant-soft:   rgba(126, 207, 160, 0.14);
+  --dt-accent-plant-stroke: rgba(126, 207, 160, 0.28);
+
+  --dt-accent-landmark:        #e8c87a;
+  --dt-accent-landmark-soft:   rgba(232, 200, 122, 0.12);
+  --dt-accent-landmark-stroke: rgba(232, 200, 122, 0.26);
+
+  --dt-accent-cold:        #c8d8f0;
+  --dt-accent-cold-soft:   rgba(200, 216, 240, 0.14);
+  --dt-accent-cold-ink:    #050c18;
+
+  /* === 描边 === */
+  --dt-stroke:        rgba(200, 216, 240, 0.10);
+  --dt-stroke-strong: rgba(200, 216, 240, 0.22);
+
+  /* === 玻璃态 === */
+  --dt-glass-blur:   blur(24px) saturate(180%);
+  --dt-glass-border: 1px solid rgba(200, 216, 240, 0.12);
+  --dt-glass-shadow: 0 8px 40px rgba(0, 0, 0, 0.62),
+                     inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* === 圆角 === */
+  --dt-radius-sm:  8px;
+  --dt-radius-md:  14px;
+  --dt-radius-lg:  20px;
+
+  /* === 动画 === */
+  --dt-ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --dt-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --dt-dur-fast:    160ms;
+  --dt-dur-mid:     280ms;
+  --dt-dur-slow:    480ms;
+}

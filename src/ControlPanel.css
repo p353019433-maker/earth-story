@@ -1,0 +1,403 @@
+/* ============================================================
+   Control Panel — Deep Space Glass 系统
+   磨砂玻璃底 · 冰蓝描边 · 统一 dt-* token
+   ============================================================ */
+
+.cp-root {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 950;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- 收起态：浮动按钮 ---------- */
+.cp-fab {
+  position: fixed;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 18px 10px 15px;
+  border-radius: 12px;
+  border: var(--dt-glass-border);
+  background: var(--dt-bg-surface);
+  -webkit-backdrop-filter: var(--dt-glass-blur);
+  backdrop-filter: var(--dt-glass-blur);
+  color: var(--dt-text-primary);
+  font-size: 13.5px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  box-shadow: var(--dt-glass-shadow);
+  transition:
+    transform  0.22s var(--dt-ease-spring),
+    opacity    0.2s  var(--dt-ease-out),
+    border-color 0.2s var(--dt-ease-out),
+    background   0.2s var(--dt-ease-out);
+  animation: cp-fab-enter 0.6s var(--dt-ease-spring) 0.3s both;
+}
+
+@keyframes cp-fab-enter {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(18px) scale(0.94); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+.cp-fab svg { width: 17px; height: 17px; color: var(--dt-accent-cold); }
+
+.cp-fab:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.02);
+  border-color: var(--dt-stroke-strong);
+}
+
+.cp-fab:active {
+  transform: translateX(-50%) translateY(0) scale(0.98);
+}
+
+.cp-fab.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(12px) scale(0.96);
+}
+
+.cp-fab-badge {
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: var(--dt-accent-cold);
+  color: var(--dt-accent-cold-ink);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  transition: transform 0.18s var(--dt-ease-spring);
+}
+
+/* ---------- 展开态：浮层面板 ---------- */
+.cp-panel {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  width: min(92vw, 372px);
+  max-height: 78vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px 18px 18px;
+  border-radius: var(--dt-radius-lg);
+  border: var(--dt-glass-border);
+  background: var(--dt-bg-surface);
+  -webkit-backdrop-filter: var(--dt-glass-blur);
+  backdrop-filter: var(--dt-glass-blur);
+  box-shadow: 0 20px 64px rgba(0, 0, 0, 0.65),
+              inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform-origin: bottom center;
+  transform: translateX(-50%) translateY(16px) scale(0.96);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    transform   0.28s var(--dt-ease-spring),
+    opacity     0.26s var(--dt-ease-out),
+    visibility  0.26s;
+}
+
+.cp-panel.is-open {
+  transform: translateX(-50%) translateY(0) scale(1);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.cp-panel::-webkit-scrollbar { width: 4px; }
+.cp-panel::-webkit-scrollbar-track { background: transparent; }
+.cp-panel::-webkit-scrollbar-thumb {
+  background: var(--dt-stroke-strong);
+  border-radius: 2px;
+}
+
+/* ---------- 头部 ---------- */
+.cp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--dt-stroke);
+}
+
+.cp-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--dt-text-primary);
+}
+
+.cp-close {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--dt-radius-sm);
+  background: var(--dt-bg-fill);
+  color: var(--dt-text-secondary);
+  cursor: pointer;
+  transition: background var(--dt-dur-fast) var(--dt-ease-out), color var(--dt-dur-fast);
+}
+.cp-close svg { width: 14px; height: 14px; }
+.cp-close:hover { background: var(--dt-bg-fill-hover); color: var(--dt-text-primary); }
+
+/* ---------- 分组 ---------- */
+.cp-group { margin-bottom: 16px; }
+.cp-group:last-child { margin-bottom: 0; }
+
+.cp-group-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 9px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--dt-text-secondary);
+}
+
+.cp-range-readout {
+  letter-spacing: 0.2px;
+  text-transform: none;
+  font-weight: 500;
+  color: var(--dt-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 药丸（区域 / 气候） ---------- */
+.cp-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.cp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 9px;
+  font-size: 13px;
+  color: var(--dt-text-secondary);
+  background: var(--dt-bg-fill);
+  border: 1px solid var(--dt-stroke);
+  cursor: pointer;
+  transition:
+    background var(--dt-dur-fast) var(--dt-ease-out),
+    border-color var(--dt-dur-fast) var(--dt-ease-out),
+    color var(--dt-dur-fast) var(--dt-ease-out),
+    transform 0.12s var(--dt-ease-spring);
+}
+.cp-pill:hover {
+  background: var(--dt-bg-fill-hover);
+  border-color: var(--dt-stroke-strong);
+}
+.cp-pill:active {
+  transform: scale(0.96);
+}
+
+/* active: 冰蓝描边 + 淡底，去实色填充 */
+.cp-pill.active {
+  color: var(--dt-accent-cold);
+  background: var(--dt-accent-cold-soft);
+  border-color: rgba(200, 216, 240, 0.35);
+  font-weight: 600;
+}
+
+.cp-pill-count {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 0 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--dt-text-tertiary);
+}
+.cp-pill.active .cp-pill-count {
+  background: rgba(200, 216, 240, 0.16);
+  color: var(--dt-accent-cold);
+}
+
+/* ---------- 分段控件（类型） ---------- */
+.cp-seg {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--dt-bg-fill);
+  border: 1px solid var(--dt-stroke);
+}
+
+.cp-seg-item {
+  padding: 7px 18px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dt-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition:
+    background var(--dt-dur-fast) var(--dt-ease-out),
+    color var(--dt-dur-fast) var(--dt-ease-out);
+}
+.cp-seg-item:hover { color: var(--dt-text-primary); }
+
+.cp-seg-item.active {
+  color: var(--dt-accent-cold);
+  font-weight: 600;
+  background: var(--dt-accent-cold-soft);
+}
+
+/* ---------- 双向海拔滑块 ---------- */
+.cp-dual-slider {
+  position: relative;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.cp-slider-track {
+  position: absolute;
+  left: 0; right: 0;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.cp-slider-fill {
+  position: absolute;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--dt-accent-cold);
+  opacity: 0.55;
+}
+
+.cp-range {
+  position: absolute;
+  left: 0; right: 0;
+  width: 100%;
+  height: 4px;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+  outline: none;
+}
+
+.cp-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dt-text-primary);
+  border: 1.5px solid var(--dt-accent-cold);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.14s var(--dt-ease-spring);
+}
+.cp-range::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+/* 滑块到达边界：脉冲警示 */
+.cp-range.at-limit::-webkit-slider-thumb {
+  border-color: rgba(255, 190, 80, 0.9);
+  animation: cp-thumb-pulse 0.4s var(--dt-ease-spring);
+}
+.cp-range.at-limit::-moz-range-thumb {
+  border-color: rgba(255, 190, 80, 0.9);
+}
+
+@keyframes cp-thumb-pulse {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+.cp-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--dt-text-primary);
+  border: 1.5px solid var(--dt-accent-cold);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* ---------- 天气特效开关 ---------- */
+.cp-weather { display: flex; flex-direction: column; gap: 7px; }
+
+.cp-weather-toggle {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 10px 13px;
+  border-radius: 10px;
+  background: var(--dt-bg-fill);
+  border: 1px solid var(--dt-stroke);
+  cursor: pointer;
+  transition:
+    background var(--dt-dur-fast) var(--dt-ease-out),
+    border-color var(--dt-dur-fast) var(--dt-ease-out);
+}
+.cp-weather-toggle:hover {
+  background: var(--dt-bg-fill-hover);
+  border-color: var(--dt-stroke-strong);
+}
+.cp-weather-toggle.on {
+  background: var(--dt-accent-cold-soft);
+  border-color: rgba(200, 216, 240, 0.32);
+}
+
+.cp-weather-emoji { font-size: 15px; line-height: 1; }
+.cp-weather-name {
+  flex: 1;
+  text-align: left;
+  font-size: 13.5px;
+  color: var(--dt-text-primary);
+}
+
+.cp-switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
+  transition: background var(--dt-dur-mid) var(--dt-ease-spring);
+}
+.cp-weather-toggle.on .cp-switch { background: var(--dt-accent-cold); }
+
+.cp-switch-thumb {
+  position: absolute;
+  top: 2.5px;
+  left: 2.5px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--dt-text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: transform var(--dt-dur-mid) var(--dt-ease-spring);
+}
+.cp-weather-toggle.on .cp-switch-thumb { transform: translateX(16px); }
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 560px) {
+  .cp-panel {
+    width: calc(100vw - 22px);
+    bottom: 14px;
+    max-height: 72vh;
+  }
+  .cp-fab { bottom: 18px; }
+}
