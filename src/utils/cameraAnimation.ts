@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { latLngToVector3 } from './geo'
 import { GLOBE_RADIUS, FLY_DURATION_MS } from '../constants'
 
 // 全局取消令牌：新飞行开始时自动中止上一次
@@ -17,6 +18,9 @@ function cinematicEase(t: number): number {
  * - 方向向量 slerp（不穿球）
  * - 取消上一次飞行
  * - 飞行结束后自动恢复 autoRotate 的原始值
+ *
+ * 注意：目标方向用 latLngToVector3 计算，因为它已补偿了
+ * react-globe.gl 内部对 globe 组施加的 Y(-PI/2) 旋转。
  */
 export function flyToCoord(
   camera: THREE.PerspectiveCamera,
@@ -26,7 +30,7 @@ export function flyToCoord(
   duration: number = FLY_DURATION_MS,
   targetRadius: number = 200
 ): Promise<void> {
-  // 取消上一次飞行（若仍在进行中）
+  // 取消上一次飞行
   if (activeCancelFn) {
     activeCancelFn()
     activeCancelFn = null
@@ -35,14 +39,8 @@ export function flyToCoord(
   const prevAutoRotate = controls.autoRotate as boolean
   controls.autoRotate = false
 
-  // 目标方向向量（单位）
-  const phi = (90 - lat) * (Math.PI / 180)
-  const theta = (lng + 180) * (Math.PI / 180)
-  const destDir = new THREE.Vector3(
-    -Math.sin(phi) * Math.cos(theta),
-     Math.cos(phi),
-     Math.sin(phi) * Math.sin(theta)
-  )
+  // 用 latLngToVector3 计算单位目标方向（补偿了 globe 旋转）
+  const destDir = latLngToVector3(lat, lng, 1).normalize()
 
   const startPos = camera.position.clone()
   const startDir = startPos.clone().normalize()
@@ -68,8 +66,6 @@ export function flyToCoord(
       const dir = new THREE.Vector3().slerpVectors(startDir, destDir, t)
       const radius = THREE.MathUtils.lerp(startRadius, targetRadius, t)
       camera.position.copy(dir).multiplyScalar(radius)
-      // 不调 controls.update()——它会把相机拉回内部缓存的旧位置
-      // 仅同步 target 让 OrbitControls 知道我们移动了
       controls.target.set(0, 0, 0)
 
       if (raw < 1) {
@@ -96,7 +92,7 @@ export function worldToScreen(
   height: number
 ): { x: number; y: number } | null {
   const projected = position.clone().project(camera)
-  if (projected.z > 1.0) return null  // 点在镜头背后
+  if (projected.z > 1.0) return null
   return {
     x: (projected.x * 0.5 + 0.5) * width,
     y: (-projected.y * 0.5 + 0.5) * height,
