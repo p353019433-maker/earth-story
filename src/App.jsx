@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { plantsData, CLIMATE_OPTIONS } from './data/plants.ts'
 import { createPlantInstancedMeshes } from './utils/plantMesh.ts'
 import { raycastPlants } from './utils/raycaster.ts'
-import { flyToCoord, worldToScreen } from './utils/cameraAnimation.ts'
+import { worldToScreen } from './utils/cameraAnimation.ts'
 import { latLngToVector3 } from './utils/geo.ts'
 import { classifyRegion, regionCenter } from './utils/region.ts'
 import { createWeatherSystem } from './utils/weather.ts'
@@ -263,9 +263,10 @@ function App() {
     autoRotatePausedRef.current = true
     animatingRef.current = true
 
-    flyToCoord(camera, controls, center.lat, center.lng, 2800, center.zoom).then(() => {
-      animatingRef.current = false
-    })
+    // 用 react-globe.gl 内置 pointOfView 平滑飞行
+    const altitude = center.zoom - GLOBE_RADIUS
+    globeRef.current.pointOfView({ lat: center.lat, lng: center.lng, altitude }, 2800)
+    setTimeout(() => { animatingRef.current = false }, 2900)
   }, [filters.region])
 
   // 天气开关变化时，更新粒子系统可见性
@@ -319,18 +320,19 @@ function App() {
         setSelectedPlant(null)
         animatingRef.current = true
 
-        flyToCoord(camera, globeRef.current.controls(), landmark.lat, landmark.lng, 1200).then(() => {
+        globeRef.current.pointOfView({ lat: landmark.lat, lng: landmark.lng, altitude: 105 }, 1200)
+        setTimeout(() => {
           animatingRef.current = false
           const pos3d = latLngToVector3(landmark.lat, landmark.lng, GLOBE_RADIUS + 5)
-          const screen = worldToScreen(pos3d, camera, dimensions.width, dimensions.height)
+          const camera2 = globeRef.current.camera()
+          const screen = camera2 ? worldToScreen(pos3d, camera2, dimensions.width, dimensions.height) : null
           if (screen) {
             setLmCardPos({ x: screen.x, y: screen.y })
           } else {
-            // fallback：屏幕中心
             setLmCardPos({ x: dimensions.width / 2, y: dimensions.height / 2 })
           }
           setLmCardVisible(true)
-        })
+        }, 1300)
         return
       }
     }
@@ -346,19 +348,20 @@ function App() {
         setLmCardVisible(false)
         setSelectedLandmark(null)
         animatingRef.current = true
-        setCardVisible(false)
 
-        flyToCoord(camera, globeRef.current.controls(), plant.lat, plant.lng, 1200).then(() => {
+        globeRef.current.pointOfView({ lat: plant.lat, lng: plant.lng, altitude: 105 }, 1200)
+        setTimeout(() => {
           animatingRef.current = false
           const pos3d = latLngToVector3(plant.lat, plant.lng, GLOBE_RADIUS + 4)
-          const screen = worldToScreen(pos3d, camera, dimensions.width, dimensions.height)
+          const camera2 = globeRef.current.camera()
+          const screen = camera2 ? worldToScreen(pos3d, camera2, dimensions.width, dimensions.height) : null
           if (screen) {
             setCardPos({ x: screen.x, y: screen.y })
           } else {
             setCardPos({ x: dimensions.width / 2, y: dimensions.height / 2 })
           }
           setCardVisible(true)
-        })
+        }, 1300)
         return
       }
     }
