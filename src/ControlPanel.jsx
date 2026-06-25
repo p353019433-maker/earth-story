@@ -3,8 +3,6 @@ import { plantsData, CLIMATE_OPTIONS } from './data/plants.ts'
 import { classifyRegion, regions } from './utils/region.ts'
 import './ControlPanel.css'
 
-const TYPE_OPTIONS = ['全部', '乔木', '花卉']
-
 function SlidersIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
@@ -34,7 +32,6 @@ export default function ControlPanel({ filters, onFiltersChange, weather, onWeat
     let n = 0
     if (filters.region !== '全部') n++
     if (filters.climates.length !== CLIMATE_OPTIONS.length) n++
-    if (filters.plantType !== '全部') n++
     if (filters.altitudeMin > 0 || filters.altitudeMax < 5000) n++
     if (weather.snow || weather.rain) n++
     return n
@@ -48,8 +45,6 @@ export default function ControlPanel({ filters, onFiltersChange, weather, onWeat
       : [...filters.climates, climate]
     onFiltersChange({ ...filters, climates: next })
   }
-
-  const handleTypeChange = (t) => onFiltersChange({ ...filters, plantType: t })
 
   const handleAltMin = (e) => {
     const val = Math.min(Number(e.target.value), filters.altitudeMax - 100)
@@ -99,22 +94,6 @@ export default function ControlPanel({ filters, onFiltersChange, weather, onWeat
                   {r !== '全部' && regionCounts[r] ? (
                     <span className="cp-pill-count">{regionCounts[r]}</span>
                   ) : null}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* 类型 */}
-          <section className="cp-group">
-            <div className="cp-group-label"><span>类型</span></div>
-            <div className="cp-seg">
-              {TYPE_OPTIONS.map((t) => (
-                <button
-                  key={t}
-                  className={`cp-seg-item${filters.plantType === t ? ' active' : ''}`}
-                  onClick={() => handleTypeChange(t)}
-                >
-                  {t}
                 </button>
               ))}
             </div>

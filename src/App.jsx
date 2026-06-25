@@ -50,7 +50,6 @@ function App() {
   const [filters, setFilters] = useState({
     region: '全部',
     climates: CLIMATE_OPTIONS,
-    plantType: '全部',
     altitudeMin: 0,
     altitudeMax: 5000,
   })
@@ -172,8 +171,6 @@ function App() {
     }
     // 气候
     if (!filters.climates.includes(plant.climate)) return false
-    // 类型
-    if (filters.plantType !== '全部' && plant.type !== filters.plantType) return false
     // 海拔
     if (plant.altitude < filters.altitudeMin || plant.altitude > filters.altitudeMax) return false
     return true
