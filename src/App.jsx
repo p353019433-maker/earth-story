@@ -318,15 +318,18 @@ function App() {
         setCardVisible(false)
         setSelectedPlant(null)
         animatingRef.current = true
-        setLmCardVisible(false)
 
         flyToCoord(camera, globeRef.current.controls(), landmark.lat, landmark.lng, 1200).then(() => {
+          animatingRef.current = false
           const pos3d = latLngToVector3(landmark.lat, landmark.lng, GLOBE_RADIUS + 5)
           const screen = worldToScreen(pos3d, camera, dimensions.width, dimensions.height)
-          if (!screen) { animatingRef.current = false; return }
-          setLmCardPos({ x: screen.x, y: screen.y })
+          if (screen) {
+            setLmCardPos({ x: screen.x, y: screen.y })
+          } else {
+            // fallback：屏幕中心
+            setLmCardPos({ x: dimensions.width / 2, y: dimensions.height / 2 })
+          }
           setLmCardVisible(true)
-          animatingRef.current = false
         })
         return
       }
@@ -346,12 +349,15 @@ function App() {
         setCardVisible(false)
 
         flyToCoord(camera, globeRef.current.controls(), plant.lat, plant.lng, 1200).then(() => {
+          animatingRef.current = false
           const pos3d = latLngToVector3(plant.lat, plant.lng, GLOBE_RADIUS + 4)
           const screen = worldToScreen(pos3d, camera, dimensions.width, dimensions.height)
-          if (!screen) { animatingRef.current = false; return }
-          setCardPos({ x: screen.x, y: screen.y })
+          if (screen) {
+            setCardPos({ x: screen.x, y: screen.y })
+          } else {
+            setCardPos({ x: dimensions.width / 2, y: dimensions.height / 2 })
+          }
           setCardVisible(true)
-          animatingRef.current = false
         })
         return
       }
