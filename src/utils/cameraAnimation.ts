@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { latLngToVector3 } from './geo'
 import { GLOBE_RADIUS, FLY_DURATION_MS } from '../constants'
 
 // 全局取消令牌：新飞行开始时自动中止上一次
@@ -69,8 +68,9 @@ export function flyToCoord(
       const dir = new THREE.Vector3().slerpVectors(startDir, destDir, t)
       const radius = THREE.MathUtils.lerp(startRadius, targetRadius, t)
       camera.position.copy(dir).multiplyScalar(radius)
+      // 不调 controls.update()——它会把相机拉回内部缓存的旧位置
+      // 仅同步 target 让 OrbitControls 知道我们移动了
       controls.target.set(0, 0, 0)
-      controls.update()
 
       if (raw < 1) {
         requestAnimationFrame(tick)
